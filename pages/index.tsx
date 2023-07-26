@@ -11,11 +11,21 @@ const todos = [
 export default function Home() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
 
-  const fetchData = async () => {
+  const createTodo = async () => {
     try {
-      const response = await fetch("api/hello");
+      const response = await fetch("api/submitTodo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: new Date().toString(),
+          todoTitle: newTodoTitle,
+        }),
+      });
       const data = await response.json();
       console.log(data);
+      setNewTodoTitle("");
     } catch (error) {
       console.log(`Error fetching data: ${error}`);
     }
@@ -30,7 +40,7 @@ export default function Home() {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await fetchData();
+            await createTodo();
             console.log(`Todo is submitted`);
           }}
         >
