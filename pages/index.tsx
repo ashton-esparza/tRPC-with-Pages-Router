@@ -1,6 +1,11 @@
 import Head from "next/head";
 import { useState } from "react";
 
+type Todos = {
+  id: string;
+  title: string;
+};
+
 const todos = [
   { id: "1", title: "Create DEMO Code" },
   { id: "2", title: "Create Script" },
@@ -9,8 +14,6 @@ const todos = [
 
 export default function Home() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
-
-  fetch("api/getTodos");
 
   const createTodo = async () => {
     try {
@@ -42,6 +45,12 @@ export default function Home() {
           onSubmit={async (e) => {
             e.preventDefault();
             await createTodo();
+            console.log("printing todos......");
+            const res = await fetch("api/getTodos");
+            const data = await res.json();
+            data.todos.map((todo: Todos) => {
+              console.log(todo.title);
+            });
           }}
         >
           <label>New Todo</label>

@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 type Todos = {
   id: string;
-  todoTitle: string;
+  title: string;
 };
 
 type Data = {
@@ -30,10 +30,7 @@ export default async function handler(
     console.log("Fetched TODOS:");
     console.log(fetchedTodos);
     res.status(200).json({
-      todos: [
-        { id: "1", todoTitle: "title 1" },
-        { id: "2", todoTitle: "title 2" },
-      ],
+      todos: fetchedTodos as unknown as Todos[],
     });
   } catch (error) {
     console.log("FAILED TO CONNECT TO DB!");
