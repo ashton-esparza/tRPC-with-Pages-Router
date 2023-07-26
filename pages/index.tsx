@@ -1,5 +1,4 @@
 import Head from "next/head";
-import styles from "@/styles/Home.module.css";
 import { useState } from "react";
 
 const todos = [
@@ -10,6 +9,8 @@ const todos = [
 
 export default function Home() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
+
+  fetch("api/getTodos");
 
   const createTodo = async () => {
     try {
@@ -41,7 +42,6 @@ export default function Home() {
           onSubmit={async (e) => {
             e.preventDefault();
             await createTodo();
-            console.log(`Todo is submitted`);
           }}
         >
           <label>New Todo</label>

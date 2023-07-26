@@ -11,17 +11,12 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   if (req.method === "POST") {
-    const { id, todoTitle } = req.body;
-    // Here, you can process the todo item as needed (e.g., store it in a database, etc.)
-    console.log("Received todo:", todoTitle);
-    console.log("id:", id);
-
     const client = new MongoClient(process.env.DB_URI!);
 
     try {
-      await client.connect();
+      const { id, todoTitle } = req.body;
 
-      console.log("CONNECTED TO DB!");
+      await client.connect();
 
       const db = client.db("demo");
 
@@ -32,13 +27,11 @@ export default async function handler(
         { id: id, title: todoTitle },
         { upsert: true, returnDocument: "after" }
       );
-    } catch (error) {
-      console.log("FAILED TO CONNECT TO DB!");
 
+      res.status(200).json({ message: "Todo item submitted successfully..." });
+    } catch (error) {
       res.status(405).json({ message: String(error) });
     }
-
-    res.status(200).json({ message: "Todo item submitted successfully!" });
   } else {
     res.status(405).json({ message: "Method not allowed" });
   }
