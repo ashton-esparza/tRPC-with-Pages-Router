@@ -62,18 +62,21 @@ const createTodo = async (newTodoTitle: String) => {
 export default function Home() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient(); //3 Query Invalidation
 
+  //1 Query
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["todos"],
     queryFn: getTodos,
   });
 
+  //2 Mutation
   const mutation = useMutation({
     mutationFn: (newTodo: string) => {
       return createTodo(newTodo);
     },
     onSuccess: () => {
+      //3 Query Invalidation
       console.log("mutation was successful....");
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
@@ -91,7 +94,7 @@ export default function Home() {
             className={styles.todoForm}
             onSubmit={async (e) => {
               e.preventDefault();
-              // Mutation here
+              //2 Mutation
               mutation.mutate(newTodoTitle);
               setNewTodoTitle("");
             }}
@@ -105,13 +108,14 @@ export default function Home() {
             ></input>
             <button>Create Todo</button>
           </form>
+          {/* 3 Mutation */}
           {mutation.isLoading && <p>Creating todo...</p>}
           {mutation.isSuccess && <p>Todo Created...</p>}
         </div>
 
         <div className={styles.todoList}>
           <h1>Todo List...</h1>
-          {/* Todos Here */}
+          {/* 1 Query */}
           {isLoading ? (
             <p>Loading todos...</p>
           ) : isError ? (
