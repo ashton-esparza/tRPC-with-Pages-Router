@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 type Todo = {
   id: string;
@@ -50,6 +50,12 @@ export default function Home() {
     queryFn: getTodos,
   });
 
+  const mutation = useMutation({
+    mutationFn: (newTodo: string) => {
+      return createTodo(newTodo);
+    },
+  });
+
   return (
     <>
       <Head>
@@ -60,7 +66,7 @@ export default function Home() {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await createTodo(newTodoTitle);
+            mutation.mutate(newTodoTitle);
             setNewTodoTitle("");
           }}
         >
@@ -85,3 +91,10 @@ export default function Home() {
     </>
   );
 }
+
+// Steps
+// 1: Wrap app with QueryClientProvider
+// 2: Wire up useQuery
+// 3: Create JSX to display todos
+// 4: Create mutation
+// 5: Call mutation
