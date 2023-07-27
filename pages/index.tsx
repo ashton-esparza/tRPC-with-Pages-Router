@@ -110,6 +110,7 @@ export default function Home() {
         </div>
 
         <div className={styles.todoList}>
+          <h1>Todo List...</h1>
           {/* Todos Here */}
           {isLoading ? (
             <p>Loading todos...</p>

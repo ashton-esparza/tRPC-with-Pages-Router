@@ -55,6 +55,11 @@
   width: 25rem;
 }
 
+.todoList h1 {
+  font-size: 1.2rem;
+  margin: 0.2rem 0rem;
+}
+
 .todoList p {
   font-weight: 600;
 
