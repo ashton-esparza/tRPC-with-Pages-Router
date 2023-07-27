@@ -1,20 +1,37 @@
 import Head from "next/head";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-type Todos = {
+type Todo = {
   id: string;
   title: string;
 };
 
-const todos = [
-  { id: "1", title: "Create DEMO Code" },
-  { id: "2", title: "Create Script" },
-  { id: "3", title: "Record" },
-];
+type Data = {
+  todos: Todo[];
+};
+
+//query
+const getTodos = async () => {
+  const res = await fetch("/api/getTodos");
+  if (!res.ok) {
+    throw new Error("Returned todos invalid...");
+  }
+
+  const data: Data = await res.json();
+
+  return data;
+};
 
 export default function Home() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
 
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ["todos"],
+    queryFn: getTodos,
+  });
+
+  //onSubmit handler
   const createTodo = async () => {
     try {
       const response = await fetch("api/submitTodo", {
@@ -28,12 +45,13 @@ export default function Home() {
         }),
       });
       const data = await response.json();
-      console.log(data);
+      console.log(data.message);
       setNewTodoTitle("");
     } catch (error) {
       console.log(`Error fetching data: ${error}`);
     }
   };
+
   return (
     <>
       <Head>
@@ -45,12 +63,6 @@ export default function Home() {
           onSubmit={async (e) => {
             e.preventDefault();
             await createTodo();
-            console.log("printing todos......");
-            const res = await fetch("api/getTodos");
-            const data = await res.json();
-            data.todos.map((todo: Todos) => {
-              console.log(todo.title);
-            });
           }}
         >
           <label>New Todo</label>
@@ -64,11 +76,13 @@ export default function Home() {
         </form>
       </div>
 
-      <div>
-        {todos.map((todo) => {
-          return <p key={todo.id}>{todo.title}</p>;
-        })}
-      </div>
+      {isLoading ? (
+        <p>Loading todos...</p>
+      ) : isError ? (
+        <p>Error...</p>
+      ) : (
+        data.todos.map((todo) => <p key={todo.id}>{todo.title}</p>)
+      )}
     </>
   );
 }

@@ -2,13 +2,13 @@
 import { MongoClient } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-type Todos = {
+type Todo = {
   id: string;
   title: string;
 };
 
 type Data = {
-  todos: Todos[];
+  todos: Todo[];
 };
 
 export default async function handler(
@@ -20,21 +20,16 @@ export default async function handler(
   try {
     await client.connect();
 
-    console.log("CONNECTED TO DB!");
-
     const db = client.db("demo");
 
     const todosCollection = db.collection("todos");
 
     const fetchedTodos = await todosCollection.find().toArray();
-    console.log("Fetched TODOS:");
-    console.log(fetchedTodos);
+
     res.status(200).json({
-      todos: fetchedTodos as unknown as Todos[],
+      todos: fetchedTodos as unknown as Todo[],
     });
   } catch (error) {
-    console.log("FAILED TO CONNECT TO DB!");
-
     res.status(405).json({ todos: [] });
   }
 }
