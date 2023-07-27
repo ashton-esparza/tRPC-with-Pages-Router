@@ -11,7 +11,7 @@ type Data = {
   todos: Todo[];
 };
 
-//query
+//query todos
 const getTodos = async () => {
   const res = await fetch("/api/getTodos");
   if (!res.ok) {
@@ -23,6 +23,25 @@ const getTodos = async () => {
   return data;
 };
 
+//create todo
+const createTodo = async (newTodoTitle: String) => {
+  try {
+    const response = await fetch("api/submitTodo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: new Date().toString(),
+        todoTitle: newTodoTitle,
+      }),
+    });
+    console.log((await response.json()).message);
+  } catch (error) {
+    console.log(`Error fetching data: ${error}`);
+  }
+};
+
 export default function Home() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
 
@@ -30,27 +49,6 @@ export default function Home() {
     queryKey: ["todos"],
     queryFn: getTodos,
   });
-
-  //onSubmit handler
-  const createTodo = async () => {
-    try {
-      const response = await fetch("api/submitTodo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: new Date().toString(),
-          todoTitle: newTodoTitle,
-        }),
-      });
-      const data = await response.json();
-      console.log(data.message);
-      setNewTodoTitle("");
-    } catch (error) {
-      console.log(`Error fetching data: ${error}`);
-    }
-  };
 
   return (
     <>
@@ -62,7 +60,8 @@ export default function Home() {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await createTodo();
+            await createTodo(newTodoTitle);
+            setNewTodoTitle("");
           }}
         >
           <label>New Todo</label>
