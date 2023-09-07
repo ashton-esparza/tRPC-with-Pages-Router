@@ -114,7 +114,7 @@ export default function Home() {
           ) : isError ? (
             <p>Error...</p>
           ) : (
-            data.greeting
+            data.todos.map((todo) => <p key={todo.id}>{todo.title}</p>)
           )}
         </div>
       </div>
