@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { trpc } from "../utils/trpc";
 import styles from "../styles/home.module.css";
 
 // TanStack Query Demo
@@ -52,22 +53,23 @@ const createTodo = async (newTodoTitle: String) => {
 export default function Home() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  const { isLoading, isError, data, error } = useQuery({
-    queryKey: ["todos"],
-    queryFn: getTodos,
-  });
+  // const { isLoading, isError, data, error } = useQuery({
+  //   queryKey: ["todos"],
+  //   queryFn: getTodos,
+  // });
+  const { isLoading, isError, data, error } = trpc.getTodos.useQuery();
 
-  const mutation = useMutation({
-    mutationFn: (newTodo: string) => {
-      return createTodo(newTodo);
-    },
-    onSuccess: () => {
-      console.log("mutation was successful....");
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-    },
-  });
+  // const mutation = useMutation({
+  //   mutationFn: (newTodo: string) => {
+  //     return createTodo(newTodo);
+  //   },
+  //   onSuccess: () => {
+  //     console.log("mutation was successful....");
+  //     queryClient.invalidateQueries({ queryKey: ["todos"] });
+  //   },
+  // });
 
   return (
     <>
@@ -81,7 +83,7 @@ export default function Home() {
             className={styles.todoForm}
             onSubmit={async (e) => {
               e.preventDefault();
-              mutation.mutate(newTodoTitle);
+              // mutation.mutate(newTodoTitle);
               setNewTodoTitle("");
             }}
           >
@@ -94,18 +96,25 @@ export default function Home() {
             ></input>
             <button>Create Todo</button>
           </form>
-          {mutation.isLoading && <p>Creating todo...</p>}
-          {mutation.isSuccess && <p>Todo Created...</p>}
+          {/* {mutation.isLoading && <p>Creating todo...</p>}
+          {mutation.isSuccess && <p>Todo Created...</p>} */}
         </div>
 
         <div className={styles.todoList}>
           <h1>Todo List...</h1>
-          {isLoading ? (
+          {/* {isLoading ? (
             <p>Loading todos...</p>
           ) : isError ? (
             <p>Error...</p>
           ) : (
             data.todos.map((todo) => <p key={todo.id}>{todo.title}</p>)
+          )} */}
+          {isLoading ? (
+            <p>Loading todos...</p>
+          ) : isError ? (
+            <p>Error...</p>
+          ) : (
+            data.greeting
           )}
         </div>
       </div>

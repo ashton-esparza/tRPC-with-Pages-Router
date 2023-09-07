@@ -2,15 +2,15 @@ import { z } from "zod";
 import { procedure, router } from "../trpc";
 
 export const appRouter = router({
-  hello: procedure
-    .input(
-      z.object({
-        text: z.string(),
-      })
-    )
-    .query((opts) => {
+  getTodos: procedure
+    // .input(
+    //   z.object({
+    //     text: z.string(),
+    //   })
+    // )
+    .query(() => {
       return {
-        greeting: `hello ${opts.input.text}`,
+        greeting: `hello friend`,
       };
     }),
 });
