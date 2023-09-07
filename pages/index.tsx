@@ -70,7 +70,15 @@ export default function Home() {
   //     queryClient.invalidateQueries({ queryKey: ["todos"] });
   //   },
   // });
-  const mutation = trpc.submitTodo.useMutation();
+
+  const ctxUtils = trpc.useContext();
+
+  const mutation = trpc.submitTodo.useMutation({
+    onSuccess(input) {
+      console.log("rpc was successful, now invalidating todo query...");
+      ctxUtils.getTodos.invalidate();
+    },
+  });
 
   return (
     <>
