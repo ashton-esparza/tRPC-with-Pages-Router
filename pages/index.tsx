@@ -6,18 +6,8 @@ import styles from "../styles/home.module.css";
 // TanStack Query Demo
 //
 // Goals:
-// List a collection of exisitng Todos through a query
+// List a collection of existing Todos through a query
 // Create Todos using a mutation
-//
-// Steps:
-// 1: Wrap app with QueryClientProvider
-// 2: Call useQuery
-// 3: Create JSX to display todos
-// 4: Create mutation
-// 5: Call mutation
-// 6: Show JSX examples and callback from mutation state
-// 7: Create query client with useQueryClient
-// 8: Invalidate todos query
 
 type Todo = {
   id: string;
@@ -62,21 +52,18 @@ const createTodo = async (newTodoTitle: String) => {
 export default function Home() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
 
-  const queryClient = useQueryClient(); //3 Query Invalidation
+  const queryClient = useQueryClient();
 
-  //1 Query
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["todos"],
     queryFn: getTodos,
   });
 
-  //2 Mutation
   const mutation = useMutation({
     mutationFn: (newTodo: string) => {
       return createTodo(newTodo);
     },
     onSuccess: () => {
-      //3 Query Invalidation
       console.log("mutation was successful....");
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
@@ -94,7 +81,6 @@ export default function Home() {
             className={styles.todoForm}
             onSubmit={async (e) => {
               e.preventDefault();
-              //2 Mutation
               mutation.mutate(newTodoTitle);
               setNewTodoTitle("");
             }}
@@ -108,14 +94,12 @@ export default function Home() {
             ></input>
             <button>Create Todo</button>
           </form>
-          {/* 3 Mutation */}
           {mutation.isLoading && <p>Creating todo...</p>}
           {mutation.isSuccess && <p>Todo Created...</p>}
         </div>
 
         <div className={styles.todoList}>
           <h1>Todo List...</h1>
-          {/* 1 Query */}
           {isLoading ? (
             <p>Loading todos...</p>
           ) : isError ? (
