@@ -70,6 +70,7 @@ export default function Home() {
   //     queryClient.invalidateQueries({ queryKey: ["todos"] });
   //   },
   // });
+  const mutation = trpc.submitTodo.useMutation();
 
   return (
     <>
@@ -83,7 +84,7 @@ export default function Home() {
             className={styles.todoForm}
             onSubmit={async (e) => {
               e.preventDefault();
-              // mutation.mutate(newTodoTitle);
+              mutation.mutate({ todoTitle: newTodoTitle });
               setNewTodoTitle("");
             }}
           >
@@ -102,13 +103,6 @@ export default function Home() {
 
         <div className={styles.todoList}>
           <h1>Todo List...</h1>
-          {/* {isLoading ? (
-            <p>Loading todos...</p>
-          ) : isError ? (
-            <p>Error...</p>
-          ) : (
-            data.todos.map((todo) => <p key={todo.id}>{todo.title}</p>)
-          )} */}
           {isLoading ? (
             <p>Loading todos...</p>
           ) : isError ? (
