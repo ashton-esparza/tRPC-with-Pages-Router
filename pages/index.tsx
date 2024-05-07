@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// import { trpc } from "../utils/trpc";
+// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { trpc } from "../utils/trpc";
 import styles from "../styles/home.module.css";
 
 // tRPC Query Demo
@@ -53,32 +53,32 @@ const createTodo = async (newTodoTitle: String) => {
 export default function Home() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  const { isLoading, isError, data, error } = useQuery({
-    queryKey: ["todos"],
-    queryFn: getTodos,
-  });
-  // const { isLoading, isError, data, error } = trpc.getTodos.useQuery();
+  // const { isLoading, isError, data, error } = useQuery({
+  //   queryKey: ["todos"],
+  //   queryFn: getTodos,
+  // });
+  const { isLoading, isError, data, error } = trpc.getTodos.useQuery();
 
-  const mutation = useMutation({
-    mutationFn: (newTodo: string) => {
-      return createTodo(newTodo);
-    },
-    onSuccess: () => {
-      console.log("mutation was successful....");
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-    },
-  });
-
-  // const ctxUtils = trpc.useContext();
-
-  // const mutation = trpc.submitTodo.useMutation({
-  //   onSuccess(input) {
-  //     console.log("rpc was successful, now invalidating todo query...");
-  //     ctxUtils.getTodos.invalidate();
+  // const mutation = useMutation({
+  //   mutationFn: (newTodo: string) => {
+  //     return createTodo(newTodo);
+  //   },
+  //   onSuccess: () => {
+  //     console.log("mutation was successful....");
+  //     queryClient.invalidateQueries({ queryKey: ["todos"] });
   //   },
   // });
+
+  const ctxUtils = trpc.useContext();
+
+  const mutation = trpc.submitTodo.useMutation({
+    onSuccess(input) {
+      console.log("rpc was successful, now invalidating todo query...");
+      ctxUtils.getTodos.invalidate();
+    },
+  });
 
   return (
     <>
@@ -92,8 +92,8 @@ export default function Home() {
             className={styles.todoForm}
             onSubmit={async (e) => {
               e.preventDefault();
-              mutation.mutate(newTodoTitle);
-              // mutation.mutate({ todoTitle: newTodoTitle });
+              // mutation.mutate(newTodoTitle);
+              mutation.mutate({ todoTitle: newTodoTitle });
               setNewTodoTitle("");
             }}
           >
